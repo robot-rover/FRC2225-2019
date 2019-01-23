@@ -72,6 +72,13 @@ public class Drivetrain extends Subsystem {
 
         setMotorVoltage(fl, fr, bl, br);
     }
+    
+    public void translate(Vector2D v){
+        motorOf(FRONT_LEFT).set(ControlMode.Position, v.y + v.x);
+        motorOf(FRONT_RIGHT).set(ControlMode.Position, v.y - v.x);
+        motorOf(BACK_LEFT).set(ControlMode.Position, v.y - v.x);
+        motorOf(BACK_RIGHT).set(ControlMode.Position, v.y + v.x);
+    }
 
     public void setMotorVoltage(double fl, double fr, double bl, double br) {
         motorOf(FRONT_LEFT).set(ControlMode.PercentOutput, fl);
