@@ -24,6 +24,10 @@ public class Drivetrain extends Subsystem {
     public static final Vector2D frontRightVec = new Vector2D(-Math.sqrt(2) / 2, Math.sqrt(2) / 2);
     public static final Vector2D backLeftVec = new Vector2D(-Math.sqrt(2) / 2, Math.sqrt(2) / 2);
     public static final Vector2D backRightVec = new Vector2D(Math.sqrt(2) / 2, Math.sqrt(2) / 2);
+    public static final double _wheelCircumferenceCm = 1;
+    public static final double _motorRotsPerWheelRot = 1;
+    public static final int _countsPerMotorRot = 1;
+    
     public TalonSRX[] motors;
     public ADXRS450_Gyro gyro;
 
@@ -73,13 +77,15 @@ public class Drivetrain extends Subsystem {
         setMotorVoltage(fl, fr, bl, br);
     }
     
+    private double cmToCounts(double cm) {
+        return cm / _wheelCircumferenceCm * _motorRotsPerWheelRot * _countsPerMotorRot;
+    }
+    
     public void translate(Vector2D v){
-        
-        
-        motorOf(FRONT_LEFT).set(ControlMode.Position, v.dot(frontLeftVec));
-        motorOf(FRONT_RIGHT).set(ControlMode.Position, v.dot(frontRightVec));
-        motorOf(BACK_LEFT).set(ControlMode.Position, v.dot(backLeftVec));
-        motorOf(BACK_RIGHT).set(ControlMode.Position, v.dot(backRightVec));
+        motorOf(FRONT_LEFT).set(ControlMode.Position, motorOf(FRONT_LEFT).getSelectedSensorPosition() + cmToCounts(v.dot(frontLeftVec)));
+        motorOf(FRONT_RIGHT).set(ControlMode.Position, motorOf(FRONT_RIGHT).getSelectedSensorPosition() + cmToCounts(v.dot(frontRightVec)));
+        motorOf(BACK_LEFT).set(ControlMode.Position, motorOf(BACK_LEFT).getSelectedSensorPosition() + cmToCounts(v.dot(backLeftVec)));
+        motorOf(BACK_RIGHT).set(ControlMode.Position, motorOf(BACK_RIGHT).getSelectedSensorPosition() + cmToCounts(v.dot(backRightVec)));
     }
 
     public void setMotorVoltage(double fl, double fr, double bl, double br) {
